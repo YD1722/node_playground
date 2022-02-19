@@ -8,14 +8,34 @@ function doHeavyStuff(item) {
     .digest('hex');
 }
 
-let arr = workerData.hashArray;
+parentPort.on('message', (data) => {
+  console.log('Data received', data);
 
-for (let i = 0; i <= arr.length; i++) {
-  if (i == arr.length) {
-    parentPort.postMessage('Done Processing');
-    return;
+  const numberOfElements = 100;
+  const sharedBuffer = new SharedArrayBuffer(
+    Int32Array.BYTES_PER_ELEMENT * numberOfElements
+  );
+  const arr = new Int32Array(sharedBuffer);
+
+  for (let i = 0; i < numberOfElements; i += 1) {
+    arr[i] = Math.round(Math.random() * 30);
   }
 
-  console.log(`${i} | Doing some heavy stuff`);
-  doHeavyStuff(arr[i]);
-}
+  setInterval(() => {
+    console.log('First element of array : child ', arr[0]);
+  }, 2000);
+
+  parentPort.postMessage({ arr });
+});
+
+// let arr = workerData.hashArray;
+//
+// for (let i = 0; i <= arr.length; i++) {
+//   if (i == arr.length) {
+//     parentPort.postMessage('Done Processing');
+//     return;
+//   }
+//
+//   console.log(`${i} | Doing some heavy stuff`);
+//   doHeavyStuff(arr[i]);
+// }
