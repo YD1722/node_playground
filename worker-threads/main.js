@@ -1,4 +1,6 @@
-const { Worker } = require('worker_threads');
+const { Worker, MessageChannel } = require('worker_threads');
+
+const { port1, port2 } = new MessageChannel();
 
 function runService(workerData) {
   return new Promise((resolve, reject) => {
